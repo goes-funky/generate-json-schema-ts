@@ -5,7 +5,7 @@
     "name": "Nathan Adams",
     "url": "https://github.com/NathanJAdams"
   },
-  "license" : "MIT",
+  "license": "MIT",
   "homepage": "https://github.com/NathanJAdams/json-schema-to-ts",
   "repository": {
     "url": "https://github.com/NathanJAdams/json-schema-to-ts"
@@ -22,7 +22,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "yarn lint && yarn tsc",
+    "build": "lint && tsc",
     "lint": "eslint . --fix",
     "tsc": "rimraf ./dist && tsc"
   },

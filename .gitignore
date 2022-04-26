@@ -1,6 +1,5 @@
 # Node artifact files
 artifacts/
-dist/
 node_modules/
 
 # Log files
