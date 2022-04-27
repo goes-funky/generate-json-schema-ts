@@ -1,49 +1,94 @@
-import { collectionGenerator } from './collection-generator';
-import { objectGenerator } from './object-generator';
-import { tupleGenerator } from './tuple-generator';
-import { LocatedSchema, SchemaGatheredInfo, SchemaInputInfo, TypeGenerator } from './TypeGenerator';
+import { collectionGenerator } from "./collection-generator";
+import { objectGenerator } from "./object-generator";
+import { tupleGenerator } from "./tuple-generator";
+import {
+  LocatedSchema,
+  SchemaGatheredInfo,
+  SchemaInputInfo,
+  TypeGenerator,
+} from "./TypeGenerator";
 
-const PRIMITIVE_TYPES: Map<string, string> = new Map();
-PRIMITIVE_TYPES.set('null', 'null');
-PRIMITIVE_TYPES.set('boolean', 'boolean');
-PRIMITIVE_TYPES.set('integer', 'number');
-PRIMITIVE_TYPES.set('number', 'number');
-PRIMITIVE_TYPES.set('string', 'string');
+const primitiveTypes: Map<string, string> = new Map(
+  Object.entries({
+    null: "null",
+    boolean: "boolean",
+    integer: "number",
+    number: "number",
+    string: "string",
+  })
+);
 
-const basicGenerator: TypeGenerator = (locatedSchema: LocatedSchema, gatheredInfo: SchemaGatheredInfo, inputInfo: SchemaInputInfo): string | undefined => {
+const primitiveGenerator: TypeGenerator = (
+  locatedSchema: LocatedSchema
+): string | undefined => {
   const schemaTypes: Set<string> | undefined = locatedSchema.schema.type;
   if (!schemaTypes || schemaTypes.size === 0) {
     return undefined;
   }
+
   const tsTypesSet: Set<string> = new Set();
-  PRIMITIVE_TYPES.forEach((tsType: string, schemaType: string) => {
-    if (schemaTypes.has(schemaType)) {
+  for (const schemaType of Array.from(schemaTypes)) {
+    const tsType = primitiveTypes.get(schemaType);
+    if (tsType) {
       tsTypesSet.add(tsType);
     }
-  });
-  const tsTypes: string[] = Array.from(tsTypesSet);
-  const collectionType: string | undefined = collectionGenerator(locatedSchema, gatheredInfo, inputInfo);
-  const tupleType: string | undefined = tupleGenerator(locatedSchema, gatheredInfo, inputInfo);
-  const objectType: string | undefined = objectGenerator(locatedSchema, gatheredInfo, inputInfo);
-  if (collectionType) {
-    tsTypes.push(collectionType);
-  }
-  if (tupleType) {
-    tsTypes.push(tupleType);
-  }
-  if (objectType) {
-    tsTypes.push(objectType);
   }
 
-  if (tsTypes.length === 0) {
-    return undefined;
+  if (!tsTypesSet.size) {
+    return;
   }
-  if (tsTypes.length === 1) {
+
+  const tsTypes = Array.from(tsTypesSet);
+  if (tsTypes.length == 1) {
     return tsTypes[0];
   }
-  return `(${tsTypes.join(' | ')})`;
+
+  return `(${tsTypes.join(" | ")})`;
 };
 
-export {
-  basicGenerator
+const generators: TypeGenerator[] = [
+  collectionGenerator,
+  tupleGenerator,
+  objectGenerator,
+];
+
+const basicGenerator: TypeGenerator = (
+  locatedSchema: LocatedSchema,
+  gatheredInfo: SchemaGatheredInfo,
+  inputInfo: SchemaInputInfo
+): string | undefined => {
+  const schemaTypes: Set<string> | undefined = locatedSchema.schema.type;
+  if (!schemaTypes || schemaTypes.size === 0) {
+    return;
+  }
+
+  const tsTypesSet: Set<string> = new Set();
+  for (const generator of generators) {
+    const output = generator(locatedSchema, gatheredInfo, inputInfo);
+    if (output) {
+      tsTypesSet.add(output);
+    }
+  }
+
+  // no complex type found, fallback on primitiveGenerator
+  if (!tsTypesSet.size) {
+    const output = primitiveGenerator(locatedSchema, gatheredInfo, inputInfo);
+    if (output) {
+      tsTypesSet.add(output);
+    }
+  }
+
+  if (!tsTypesSet.size) {
+    return;
+  }
+
+  const tsTypes = Array.from(tsTypesSet);
+
+  if (tsTypes.length == 1) {
+    return tsTypes[0];
+  }
+
+  return tsTypes.join(" | ");
 };
+
+export { basicGenerator };

@@ -1,10 +1,11 @@
-import { FileLocation } from '../files';
-import { AllOptions } from '../options';
-import { Schema } from '../schema';
-import { References } from './References';
+import { FileLocation } from "../files";
+import { AllOptions } from "../options";
+import { Schema } from "../schema";
+import { References } from "./References";
 interface LocatedSchema {
     fileLocation: FileLocation;
     schema: Schema;
+    typeName?: string;
 }
 interface SchemaGatheredInfo {
     namedSchemas: Map<string, Schema>;

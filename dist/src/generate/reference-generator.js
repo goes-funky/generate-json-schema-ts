@@ -5,7 +5,7 @@ var referenceGenerator = function (locatedSchema, gatheredInfo, inputInfo) {
     var schema = locatedSchema.schema;
     var ref = schema.$ref;
     if (!ref) {
-        return undefined;
+        return;
     }
     var localRef = createLocalRef(ref);
     if (localRef) {
@@ -19,7 +19,7 @@ var referenceGenerator = function (locatedSchema, gatheredInfo, inputInfo) {
     if (relativeRef) {
         return relativeRef;
     }
-    return undefined;
+    throw new Error("invalid $ref: " + ref);
 };
 exports.referenceGenerator = referenceGenerator;
 var createLocalRef = function (ref) {
@@ -38,7 +38,9 @@ var createFullRef = function (ref, gatheredInfo, inputInfo) {
     for (var _i = 0, _a = Array.from(inputInfo.idFileLocations); _i < _a.length; _i++) {
         var _b = _a[_i], id = _b[0], idFileLocation = _b[1];
         if (ref.startsWith(id)) {
-            var rest = ref.substring(id.length);
+            var rest = id.endsWith("#")
+                ? ref.substring(id.length - 1)
+                : ref.substring(id.length);
             var innerRef = createLocalRef(rest);
             if (innerRef) {
                 addExternalReference(gatheredInfo.references, idFileLocation, innerRef);
@@ -54,7 +56,7 @@ var createRelativeRef = function (fileLocation, ref, gatheredInfo, inputInfo) {
         if (fileLocation.dir === idFileLocation.dir) {
             if (ref.startsWith(idFileLocation.fileName)) {
                 var rest = ref.substring(idFileLocation.fileName.length);
-                if (rest === '' || rest === '#') {
+                if (rest === "" || rest === "#") {
                     addExternalReference(gatheredInfo.references, idFileLocation);
                     return idFileLocation.fileName;
                 }
@@ -66,7 +68,7 @@ var createRelativeRef = function (fileLocation, ref, gatheredInfo, inputInfo) {
             }
         }
     }
-    return undefined;
+    return;
 };
 var addExternalReference = function (references, fileLocation, importName) {
     var importNames = references.schema.get(fileLocation);

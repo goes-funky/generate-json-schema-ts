@@ -1,29 +1,50 @@
-import { Schema } from '../schema';
-import { LocatedSchema, SchemaGatheredInfo, SchemaInputInfo, TypeGenerator } from './TypeGenerator';
-import { typeGenerator } from './type-generator';
-import { filtered } from '../util';
+import { Schema } from "../schema";
+import {
+  LocatedSchema,
+  SchemaGatheredInfo,
+  SchemaInputInfo,
+  TypeGenerator,
+} from "./TypeGenerator";
+import { typeGenerator } from "./type-generator";
 
-const allOfGenerator: TypeGenerator = (locatedSchema: LocatedSchema, gatheredInfo: SchemaGatheredInfo, inputInfo: SchemaInputInfo): string | undefined => {
+const allOfGenerator: TypeGenerator = (
+  locatedSchema: LocatedSchema,
+  gatheredInfo: SchemaGatheredInfo,
+  inputInfo: SchemaInputInfo
+): string | undefined => {
   const schema: Schema = locatedSchema.schema;
   if (!schema.allOf || schema.allOf.length === 0) {
     return undefined;
   }
-  const lines: (string | undefined)[] = [];
+  const elements: string[] = [];
   schema.allOf.forEach((elementSchema: Schema) => {
     const elementLocatedSchema: LocatedSchema = {
       fileLocation: locatedSchema.fileLocation,
-      schema: elementSchema
+      schema: elementSchema,
     };
-    const elementContent: string | undefined = typeGenerator(elementLocatedSchema, gatheredInfo, inputInfo);
-    lines.push(elementContent);
+
+    const elementContent: string | undefined = typeGenerator(
+      elementLocatedSchema,
+      gatheredInfo,
+      inputInfo
+    );
+
+    if (elementContent) {
+      elements.push(elementContent);
+    }
   });
-  const filteredLines: string[] = filtered(lines);
-  if (filteredLines.length === 0) {
-    return undefined;
+
+  if (!elements.length) {
+    return;
   }
-  return filteredLines.join('\n& ');
+
+  const output = `(${elements.join(" & ")})`;
+
+  if (!locatedSchema.typeName) {
+    return output;
+  }
+
+  return `export type ${locatedSchema.typeName} = ${output};`;
 };
 
-export {
-  allOfGenerator
-};
+export { allOfGenerator };

@@ -1,59 +1,123 @@
-import { OptionalFieldPattern } from '../options';
-import { Schema } from '../schema';
-import { LocatedSchema, SchemaGatheredInfo, SchemaInputInfo, TypeGenerator } from './TypeGenerator';
-import { typeGenerator } from './type-generator';
+import { OptionalFieldPattern } from "../options";
+import { Schema } from "../schema";
+import {
+  LocatedSchema,
+  SchemaGatheredInfo,
+  SchemaInputInfo,
+  TypeGenerator,
+} from "./TypeGenerator";
+import { typeGenerator } from "./type-generator";
 
-const objectGenerator: TypeGenerator = (locatedSchema: LocatedSchema, gatheredInfo: SchemaGatheredInfo, inputInfo: SchemaInputInfo): string | undefined => {
+const objectGenerator: TypeGenerator = (
+  locatedSchema: LocatedSchema,
+  gatheredInfo: SchemaGatheredInfo,
+  inputInfo: SchemaInputInfo
+): string | undefined => {
   const schema: Schema = locatedSchema.schema;
-  if (!schema.type || !schema.type.has('object') || !(schema.properties || schema.additionalProperties)) {
-    return undefined;
+  if (!schema.type || !schema.type.has("object")) {
+    return;
   }
-  const lines: string[] = [];
-  lines.push('{');
+
+  try {
+    const properties = propertiesGenerator(
+      locatedSchema,
+      gatheredInfo,
+      inputInfo
+    );
+
+    const output = properties.join("; ");
+
+    if (locatedSchema.typeName) {
+      return `export class ${locatedSchema.typeName} {${output}};\n`;
+    }
+
+    return `{${output}}`;
+  } catch (err) {
+    throw new Error(`generate object ${JSON.stringify(locatedSchema)}: ${err}`);
+  }
+};
+
+const propertiesGenerator = (
+  locatedSchema: LocatedSchema,
+  gatheredInfo: SchemaGatheredInfo,
+  inputInfo: SchemaInputInfo
+): string[] => {
+  const schema = locatedSchema.schema;
+  const hasProperties = schema.properties && schema.properties.size;
+  if (!schema || (!hasProperties && !schema.additionalProperties)) {
+    return [];
+  }
+
+  const properties: string[] = [];
+
   if (schema.properties) {
-    schema.properties.forEach((propertySchema: Schema, name: string) => {
-      const propertyLocatedSchema: LocatedSchema = {
-        fileLocation: locatedSchema.fileLocation,
-        schema: propertySchema
-      };
-      const type: string | undefined = typeGenerator(propertyLocatedSchema, gatheredInfo, inputInfo);
-      if (type) {
-        const isRequired: boolean = ((schema.required !== undefined) && schema.required.has(name));
-        const isQuestion: boolean = (!isRequired && inputInfo.options.ts.optionalFields == OptionalFieldPattern.QUESTION);
-        const isPipeUndefined: boolean = (!isRequired && inputInfo.options.ts.optionalFields == OptionalFieldPattern.PIPE_UNDEFINED);
-        const lineParts: string[] = [];
-        lineParts.push(name);
-        if (isQuestion) {
-          lineParts.push('?');
-        }
-        lineParts.push(`: ${type}`);
-        if (isPipeUndefined) {
-          lineParts.push(' | undefined');
-        }
-        lineParts.push(';');
-        lines.push(lineParts.join(''));
+    schema.properties.forEach((propertySchema, name) => {
+      const output = propertyGenerator(
+        locatedSchema,
+        gatheredInfo,
+        inputInfo,
+        name,
+        propertySchema
+      );
+      if (output) {
+        properties.push(output);
       }
     });
   }
-  if (schema.additionalProperties === false) {
-    lines.push('}');
-  } else {
-    const lastLineParts: string[] = [];
-    lastLineParts.push('} & Record<string, ');
-    const valueType: string | undefined = (schema.additionalProperties)
-      ? typeGenerator({ fileLocation: locatedSchema.fileLocation, schema: schema.additionalProperties }, gatheredInfo, inputInfo)
-      : undefined;
-    if (valueType) {
-      lastLineParts.push(valueType);
-    } else {
-      lastLineParts.push(inputInfo.options.ts.untyped);
+
+  if (schema.additionalProperties) {
+    const propertyLocatedSchema: LocatedSchema = {
+      fileLocation: locatedSchema.fileLocation,
+      schema: schema.additionalProperties,
+    };
+
+    const type = typeGenerator(propertyLocatedSchema, gatheredInfo, inputInfo);
+    if (!type) {
+      throw new Error(`unsupported type for additionalProperties`);
     }
-    lastLineParts.push('>');
-    lines.push(lastLineParts.join(''));
+
+    properties.push(`[key: string]: ${type}`);
   }
-  return lines.join('\n');
+
+  return properties;
 };
 
-export {
-  objectGenerator
+const propertyGenerator = (
+  locatedSchema: LocatedSchema,
+  gatheredInfo: SchemaGatheredInfo,
+  inputInfo: SchemaInputInfo,
+  name: string,
+  propertySchema: Schema
+): string | undefined => {
+  const schema: Schema = locatedSchema.schema;
+  if (!schema.type) {
+    return;
+  }
+
+  const propertyLocatedSchema: LocatedSchema = {
+    fileLocation: locatedSchema.fileLocation,
+    schema: propertySchema,
+  };
+
+  const type: string | undefined = typeGenerator(
+    propertyLocatedSchema,
+    gatheredInfo,
+    inputInfo
+  );
+  if (!type) {
+    throw new Error(`unable to generate type for property ${name}`);
+  }
+
+  if (schema.required && schema.required.has(name)) {
+    return `'${name}': ${type}`;
+  }
+
+  switch (inputInfo.options.ts.optionalFields) {
+    case OptionalFieldPattern.QUESTION:
+      return `'${name}'?: ${type}`;
+    case OptionalFieldPattern.PIPE_UNDEFINED:
+      return `'${name}': ${type} | undefined`;
+  }
 };
+
+export { objectGenerator };

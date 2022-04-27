@@ -1,32 +1,50 @@
-import { Schema } from '../schema';
-import { filtered } from '../util';
-import { LocatedSchema, SchemaGatheredInfo, SchemaInputInfo, TypeGenerator } from './TypeGenerator';
-import { typeGenerator } from './type-generator';
+import { Schema } from "../schema";
+import {
+  LocatedSchema,
+  SchemaGatheredInfo,
+  SchemaInputInfo,
+  TypeGenerator,
+} from "./TypeGenerator";
+import { typeGenerator } from "./type-generator";
 
-const anyOfGenerator: TypeGenerator = (locatedSchema: LocatedSchema, gatheredInfo: SchemaGatheredInfo, inputInfo: SchemaInputInfo): string | undefined => {
+const anyOfGenerator: TypeGenerator = (
+  locatedSchema: LocatedSchema,
+  gatheredInfo: SchemaGatheredInfo,
+  inputInfo: SchemaInputInfo
+): string | undefined => {
   const schema: Schema = locatedSchema.schema;
   if (!schema.anyOf || schema.anyOf.length === 0) {
-    return undefined;
+    return;
   }
-  const lines: (string | undefined)[] = [];
+
+  const elements: string[] = [];
   schema.anyOf.forEach((elementSchema: Schema) => {
     const elementLocatedSchema: LocatedSchema = {
       fileLocation: locatedSchema.fileLocation,
-      schema: elementSchema
+      schema: elementSchema,
     };
-    const elementContent: string | undefined = typeGenerator(elementLocatedSchema, gatheredInfo, inputInfo);
-    lines.push(elementContent);
+    const elementContent = typeGenerator(
+      elementLocatedSchema,
+      gatheredInfo,
+      inputInfo
+    );
+
+    if (elementContent) {
+      elements.push(elementContent);
+    }
   });
-  const filteredLines: string[] = filtered(lines);
-  if (filteredLines.length === 0) {
-    return undefined;
-  } else if (filteredLines.length === 1) {
-    return filteredLines[0];
-  } else {
-    return '(' + filteredLines.join('\n| ') + ')';
+
+  if (!elements.length) {
+    return;
   }
+
+  const output = `(${elements.join(" | ")})`;
+
+  if (locatedSchema.typeName) {
+    return `export type ${locatedSchema.typeName} = ${output};`;
+  }
+
+  return output;
 };
 
-export {
-  anyOfGenerator
-};
+export { anyOfGenerator };

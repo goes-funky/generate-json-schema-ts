@@ -1,11 +1,12 @@
-import { FileLocation } from '../files';
-import { AllOptions } from '../options';
-import { Schema } from '../schema';
-import { References } from './References';
+import { FileLocation } from "../files";
+import { AllOptions } from "../options";
+import { Schema } from "../schema";
+import { References } from "./References";
 
 interface LocatedSchema {
   fileLocation: FileLocation;
   schema: Schema;
+  typeName?: string;
 }
 
 interface SchemaGatheredInfo {
@@ -20,12 +21,11 @@ interface SchemaInputInfo {
 }
 
 interface TypeGenerator {
-  (locatedSchema: LocatedSchema, gatheredInfo: SchemaGatheredInfo, inputInfo: SchemaInputInfo): string | undefined;
+  (
+    locatedSchema: LocatedSchema,
+    gatheredInfo: SchemaGatheredInfo,
+    inputInfo: SchemaInputInfo
+  ): string | undefined;
 }
 
-export {
-  LocatedSchema,
-  SchemaInputInfo,
-  SchemaGatheredInfo,
-  TypeGenerator
-};
+export { LocatedSchema, SchemaInputInfo, SchemaGatheredInfo, TypeGenerator };

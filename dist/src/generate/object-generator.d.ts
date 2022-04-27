@@ -1,3 +1,3 @@
-import { TypeGenerator } from './TypeGenerator';
+import { TypeGenerator } from "./TypeGenerator";
 declare const objectGenerator: TypeGenerator;
 export { objectGenerator };
