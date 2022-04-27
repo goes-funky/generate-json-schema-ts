@@ -16,6 +16,8 @@ const fileGenerator = (
   inputInfo: SchemaInputInfo
 ): string => {
   try {
+    const header = `// Code generated from ${locatedSchema.fileLocation.fileName} DO NOT EDIT.`;
+
     const references: References = {
       schema: new Map(),
     };
@@ -56,7 +58,7 @@ const fileGenerator = (
 
     return (
       filteredJoin(
-        [imports, schemaContent, named, definitions, oneOfs],
+        [header, imports, schemaContent, named, definitions, oneOfs],
         "\n\n"
       ) + "\n"
     );
