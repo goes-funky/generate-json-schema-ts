@@ -33,6 +33,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.fileGenerator = void 0;
 var path = __importStar(require("path"));
 var util_1 = require("../util");
+var strings_1 = require("../util/strings");
 var OneOf_generator_1 = require("./OneOf-generator");
 var type_generator_1 = require("./type-generator");
 var fileGenerator = function (locatedSchema, inputInfo) {
@@ -51,7 +52,7 @@ var fileGenerator = function (locatedSchema, inputInfo) {
         var named = namedGenerator(locatedSchema.fileLocation, gatheredInfo, inputInfo);
         var imports = importsGenerator(locatedSchema.fileLocation, references);
         var oneOfs = oneOfTypesGenerator(gatheredInfo.oneOfTypes);
-        return (util_1.filteredJoin([header, imports, schemaContent, named, definitions, oneOfs], "\n\n") + "\n");
+        return (util_1.filteredJoin([header, imports, schemaContent, named, definitions, oneOfs], '\n\n') + '\n');
     }
     catch (err) {
         throw new Error("fileGenerator: " + locatedSchema.fileLocation.dir + "/" + locatedSchema.fileLocation.fileName + ": " + err);
@@ -61,7 +62,7 @@ exports.fileGenerator = fileGenerator;
 var schemaContentGenerator = function (locatedSchema, gatheredInfo, inputInfo, schemaName) {
     var typeName = typeNameGenerator(schemaName || locatedSchema.fileLocation.fileName);
     var output = type_generator_1.typeGenerator(__assign(__assign({}, locatedSchema), { typeName: typeName }), gatheredInfo, inputInfo);
-    if (output == "unknown") {
+    if (output == 'unknown') {
         return;
     }
     return output;
@@ -73,7 +74,7 @@ var importsGenerator = function (fileLocation, references) {
     var content = [];
     content.push(importMapGenerator(fileLocation, references.schema));
     var defined = util_1.filtered(content);
-    return defined.join("\n");
+    return defined.join('\n');
 };
 var importMapGenerator = function (fileLocation, references) {
     if (references.size === 0) {
@@ -82,15 +83,13 @@ var importMapGenerator = function (fileLocation, references) {
     var imports = [];
     references.forEach(function (names, referenceFileLocation) {
         if (names.size > 0) {
-            var combinedNames = Array.from(names).sort().join(", ");
+            var combinedNames = Array.from(names).sort().join(', ');
             var importPath = tsPathGenerator(path.normalize(path.relative(fileLocation.dir, referenceFileLocation.dir)));
-            var file = referenceFileLocation.fileName.length === 0
-                ? ""
-                : "/" + referenceFileLocation.fileName;
+            var file = referenceFileLocation.fileName.length === 0 ? '' : "/" + referenceFileLocation.fileName;
             imports.push("import { " + combinedNames + " } from '" + importPath + file + "';");
         }
     });
-    return imports.join("\n");
+    return imports.join('\n');
 };
 var namedGenerator = function (fileLocation, gatheredInfo, inputInfo) {
     if (gatheredInfo.namedSchemas.size === 0) {
@@ -105,7 +104,7 @@ var namedGenerator = function (fileLocation, gatheredInfo, inputInfo) {
             content.push(mapContent);
         }
         else {
-            return content.length === 0 ? undefined : content.join("\n");
+            return content.length === 0 ? undefined : content.join('\n');
         }
     }
 };
@@ -120,7 +119,7 @@ var oneOfTypesGenerator = function (typeCounts) {
             oneOfTypeLines.push(oneOfType);
         }
     });
-    return oneOfTypeLines.join("\n");
+    return oneOfTypeLines.join('\n');
 };
 var mapGenerator = function (fileLocation, map, gatheredInfo, inputInfo) {
     if (!map || map.size === 0) {
@@ -137,14 +136,11 @@ var mapGenerator = function (fileLocation, map, gatheredInfo, inputInfo) {
             content.push(schemaContent);
         }
     });
-    return content.join("\n");
+    return content.join('\n');
 };
 var typeNameGenerator = function (fileName) {
-    var usableChars = fileName.replace(/[^a-zA-Z0-9_]/g, "");
-    return usableChars.length > 0 && usableChars.match(/^[a-zA-Z_]/)
-        ? usableChars
-        : "_" + usableChars;
+    return strings_1.classify(fileName);
 };
 var tsPathGenerator = function (relativePath) {
-    return relativePath.startsWith(".") ? relativePath : "." + path.sep + relativePath;
+    return relativePath.startsWith('.') ? relativePath : '.' + path.sep + relativePath;
 };
