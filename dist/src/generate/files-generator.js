@@ -8,12 +8,12 @@ var generate = function (fileSchemas, options) {
     var fileContent = new Map();
     var inputInfo = {
         idFileLocations: idFileLocations,
-        options: options
+        options: options,
     };
     fileSchemas.forEach(function (schema, fileLocation) {
         var locatedSchema = {
             fileLocation: fileLocation,
-            schema: schema
+            schema: schema,
         };
         var generated = file_generator_1.fileGenerator(locatedSchema, inputInfo);
         fileContent.set(fileLocation, generated);

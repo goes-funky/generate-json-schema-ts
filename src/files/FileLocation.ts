@@ -3,6 +3,4 @@ interface FileLocation {
   fileName: string;
 }
 
-export {
-  FileLocation
-};
+export { FileLocation };

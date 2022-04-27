@@ -22,11 +22,7 @@ const fileGenerator = (locatedSchema: LocatedSchema, inputInfo: SchemaInputInfo)
       oneOfTypes: new Set(),
     };
 
-    const schemaContent: string | undefined = schemaContentGenerator(
-      locatedSchema,
-      gatheredInfo,
-      inputInfo,
-    );
+    const schemaContent: string | undefined = schemaContentGenerator(locatedSchema, gatheredInfo, inputInfo);
 
     const definitions: string | undefined = mapGenerator(
       locatedSchema.fileLocation,
@@ -35,23 +31,15 @@ const fileGenerator = (locatedSchema: LocatedSchema, inputInfo: SchemaInputInfo)
       inputInfo,
     );
 
-    const named: string | undefined = namedGenerator(
-      locatedSchema.fileLocation,
-      gatheredInfo,
-      inputInfo,
-    );
+    const named: string | undefined = namedGenerator(locatedSchema.fileLocation, gatheredInfo, inputInfo);
 
     const imports: string | undefined = importsGenerator(locatedSchema.fileLocation, references);
 
     const oneOfs: string | undefined = oneOfTypesGenerator(gatheredInfo.oneOfTypes);
 
-    return (
-      filteredJoin([header, imports, schemaContent, named, definitions, oneOfs], '\n\n') + '\n'
-    );
+    return filteredJoin([header, imports, schemaContent, named, definitions, oneOfs], '\n\n') + '\n';
   } catch (err) {
-    throw new Error(
-      `fileGenerator: ${locatedSchema.fileLocation.dir}/${locatedSchema.fileLocation.fileName}: ${err}`,
-    );
+    throw new Error(`fileGenerator: ${locatedSchema.fileLocation.dir}/${locatedSchema.fileLocation.fileName}: ${err}`);
   }
 };
 
@@ -78,10 +66,7 @@ const schemaContentGenerator = (
   return output;
 };
 
-const importsGenerator = (
-  fileLocation: FileLocation,
-  references: References,
-): string | undefined => {
+const importsGenerator = (fileLocation: FileLocation, references: References): string | undefined => {
   if (references.schema.size === 0) {
     return undefined;
   }
@@ -105,8 +90,7 @@ const importMapGenerator = (
       const importPath: string = tsPathGenerator(
         path.normalize(path.relative(fileLocation.dir, referenceFileLocation.dir)),
       );
-      const file: string =
-        referenceFileLocation.fileName.length === 0 ? '' : `/${referenceFileLocation.fileName}`;
+      const file: string = referenceFileLocation.fileName.length === 0 ? '' : `/${referenceFileLocation.fileName}`;
       imports.push(`import { ${combinedNames} } from '${importPath}${file}';`);
     }
   });
@@ -168,12 +152,7 @@ const mapGenerator = (
       fileLocation,
       schema: namedSchema,
     };
-    const schemaContent: string | undefined = schemaContentGenerator(
-      namedLocatedSchema,
-      gatheredInfo,
-      inputInfo,
-      name,
-    );
+    const schemaContent: string | undefined = schemaContentGenerator(namedLocatedSchema, gatheredInfo, inputInfo, name);
     if (schemaContent) {
       content.push(schemaContent);
     }

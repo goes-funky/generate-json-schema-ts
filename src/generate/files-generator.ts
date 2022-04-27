@@ -10,12 +10,12 @@ const generate = (fileSchemas: Map<FileLocation, Schema>, options: AllOptions): 
   const fileContent: Map<FileLocation, string> = new Map();
   const inputInfo: SchemaInputInfo = {
     idFileLocations,
-    options
+    options,
   };
   fileSchemas.forEach((schema: Schema, fileLocation: FileLocation) => {
     const locatedSchema: LocatedSchema = {
       fileLocation,
-      schema
+      schema,
     };
     const generated: string = fileGenerator(locatedSchema, inputInfo);
     fileContent.set(fileLocation, generated);
@@ -23,6 +23,4 @@ const generate = (fileSchemas: Map<FileLocation, Schema>, options: AllOptions): 
   return fileContent;
 };
 
-export {
-  generate
-};
+export { generate };

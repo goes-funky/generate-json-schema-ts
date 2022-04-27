@@ -21,7 +21,7 @@ var allOfGenerator = function (locatedSchema, gatheredInfo, inputInfo) {
     if (!elements.length) {
         return;
     }
-    var output = "(" + elements.join(" & ") + ")";
+    var output = "(" + elements.join(' & ') + ")";
     if (!locatedSchema.typeName) {
         return output;
     }

@@ -32,6 +32,4 @@ const OneOfNGenerator = (typeCount: number): string | undefined => {
   return [firstLine, middle, lastLine, suppressType].join('\n');
 };
 
-export {
-  OneOfNGenerator
-};
+export { OneOfNGenerator };

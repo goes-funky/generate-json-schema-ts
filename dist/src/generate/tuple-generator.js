@@ -11,7 +11,7 @@ var tupleGenerator = function (locatedSchema, gatheredInfo, inputInfo) {
     schema.items.forEach(function (elementSchema) {
         var elementLocatedSchema = {
             fileLocation: locatedSchema.fileLocation,
-            schema: elementSchema
+            schema: elementSchema,
         };
         var content = type_generator_1.typeGenerator(elementLocatedSchema, gatheredInfo, inputInfo);
         if (content) {
@@ -21,8 +21,11 @@ var tupleGenerator = function (locatedSchema, gatheredInfo, inputInfo) {
     if (schema.additionalItems !== false) {
         var lastTypeParts = [];
         lastTypeParts.push('...');
-        var valueType = (schema.additionalItems)
-            ? type_generator_1.typeGenerator({ fileLocation: locatedSchema.fileLocation, schema: schema.additionalItems }, gatheredInfo, inputInfo)
+        var valueType = schema.additionalItems
+            ? type_generator_1.typeGenerator({
+                fileLocation: locatedSchema.fileLocation,
+                schema: schema.additionalItems,
+            }, gatheredInfo, inputInfo)
             : undefined;
         if (valueType) {
             lastTypeParts.push(valueType);

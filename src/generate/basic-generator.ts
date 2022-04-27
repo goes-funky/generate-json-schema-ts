@@ -1,26 +1,19 @@
-import { collectionGenerator } from "./collection-generator";
-import { objectGenerator } from "./object-generator";
-import { tupleGenerator } from "./tuple-generator";
-import {
-  LocatedSchema,
-  SchemaGatheredInfo,
-  SchemaInputInfo,
-  TypeGenerator,
-} from "./TypeGenerator";
+import { collectionGenerator } from './collection-generator';
+import { objectGenerator } from './object-generator';
+import { tupleGenerator } from './tuple-generator';
+import { LocatedSchema, SchemaGatheredInfo, SchemaInputInfo, TypeGenerator } from './TypeGenerator';
 
 const primitiveTypes: Map<string, string> = new Map(
   Object.entries({
-    null: "null",
-    boolean: "boolean",
-    integer: "number",
-    number: "number",
-    string: "string",
-  })
+    null: 'null',
+    boolean: 'boolean',
+    integer: 'number',
+    number: 'number',
+    string: 'string',
+  }),
 );
 
-const primitiveGenerator: TypeGenerator = (
-  locatedSchema: LocatedSchema
-): string | undefined => {
+const primitiveGenerator: TypeGenerator = (locatedSchema: LocatedSchema): string | undefined => {
   const schemaTypes: Set<string> | undefined = locatedSchema.schema.type;
   if (!schemaTypes || schemaTypes.size === 0) {
     return undefined;
@@ -43,19 +36,15 @@ const primitiveGenerator: TypeGenerator = (
     return tsTypes[0];
   }
 
-  return `(${tsTypes.join(" | ")})`;
+  return `(${tsTypes.join(' | ')})`;
 };
 
-const generators: TypeGenerator[] = [
-  collectionGenerator,
-  tupleGenerator,
-  objectGenerator,
-];
+const generators: TypeGenerator[] = [collectionGenerator, tupleGenerator, objectGenerator];
 
 const basicGenerator: TypeGenerator = (
   locatedSchema: LocatedSchema,
   gatheredInfo: SchemaGatheredInfo,
-  inputInfo: SchemaInputInfo
+  inputInfo: SchemaInputInfo,
 ): string | undefined => {
   const schemaTypes: Set<string> | undefined = locatedSchema.schema.type;
   if (!schemaTypes || schemaTypes.size === 0) {
@@ -88,7 +77,7 @@ const basicGenerator: TypeGenerator = (
     return tsTypes[0];
   }
 
-  return tsTypes.join(" | ");
+  return tsTypes.join(' | ');
 };
 
 export { basicGenerator };

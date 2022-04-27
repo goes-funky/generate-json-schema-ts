@@ -6,8 +6,6 @@ var constantGenerator = function (locatedSchema) {
     if (constant === undefined) {
         return undefined;
     }
-    return (typeof constant === 'string')
-        ? "'" + constant + "'"
-        : "" + constant;
+    return typeof constant === 'string' ? "'" + constant + "'" : "" + constant;
 };
 exports.constantGenerator = constantGenerator;

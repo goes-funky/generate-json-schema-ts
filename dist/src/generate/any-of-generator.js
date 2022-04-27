@@ -21,7 +21,7 @@ var anyOfGenerator = function (locatedSchema, gatheredInfo, inputInfo) {
     if (!elements.length) {
         return;
     }
-    var output = "(" + elements.join(" | ") + ")";
+    var output = "(" + elements.join(' | ') + ")";
     if (locatedSchema.typeName) {
         return "export type " + locatedSchema.typeName + " = " + output + ";";
     }

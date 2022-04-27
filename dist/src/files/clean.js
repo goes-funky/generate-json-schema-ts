@@ -33,9 +33,7 @@ var clean = function (options) {
         else {
             var cwd = options.files.cwd || process.cwd();
             var absoluteDir = path.resolve(cwd, options.files.destination.dir);
-            rmrf(absoluteDir)
-                .then(resolve)
-                .catch(reject);
+            rmrf(absoluteDir).then(resolve).catch(reject);
         }
     });
 };

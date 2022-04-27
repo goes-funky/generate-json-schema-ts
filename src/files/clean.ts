@@ -9,9 +9,7 @@ const clean = (options: AllOptions): Promise<void> => {
     } else {
       const cwd: string = options.files.cwd || process.cwd();
       const absoluteDir: string = path.resolve(cwd, options.files.destination.dir);
-      rmrf(absoluteDir)
-        .then(resolve)
-        .catch(reject);
+      rmrf(absoluteDir).then(resolve).catch(reject);
     }
   });
 };
@@ -25,10 +23,8 @@ const rmrf = (dir: string): Promise<void> => {
         resolve();
       }
     };
-    rimraf(dir, func);
+    rimraf(dir, func as any);
   });
 };
 
-export {
-  clean
-};
+export { clean };

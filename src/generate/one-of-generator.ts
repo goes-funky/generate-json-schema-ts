@@ -3,7 +3,11 @@ import { filtered } from '../util';
 import { LocatedSchema, SchemaGatheredInfo, SchemaInputInfo, TypeGenerator } from './TypeGenerator';
 import { typeGenerator } from './type-generator';
 
-const oneOfGenerator: TypeGenerator = (locatedSchema: LocatedSchema, gatheredInfo: SchemaGatheredInfo, inputInfo: SchemaInputInfo): string | undefined => {
+const oneOfGenerator: TypeGenerator = (
+  locatedSchema: LocatedSchema,
+  gatheredInfo: SchemaGatheredInfo,
+  inputInfo: SchemaInputInfo,
+): string | undefined => {
   const schema: Schema = locatedSchema.schema;
   if (!schema.oneOf || schema.oneOf.length === 0) {
     return undefined;
@@ -12,7 +16,7 @@ const oneOfGenerator: TypeGenerator = (locatedSchema: LocatedSchema, gatheredInf
   schema.oneOf.forEach((elementSchema: Schema) => {
     const elementLocatedSchema: LocatedSchema = {
       fileLocation: locatedSchema.fileLocation,
-      schema: elementSchema
+      schema: elementSchema,
     };
     const elementContent: string | undefined = typeGenerator(elementLocatedSchema, gatheredInfo, inputInfo);
     lines.push(elementContent);
@@ -30,6 +34,4 @@ const oneOfGenerator: TypeGenerator = (locatedSchema: LocatedSchema, gatheredInf
   }
 };
 
-export {
-  oneOfGenerator
-};
+export { oneOfGenerator };

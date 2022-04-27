@@ -47,7 +47,7 @@ var parseSchema = function (rawSchema) {
         oneOf: oneOf,
         properties: properties,
         additionalProperties: additionalProperties,
-        required: required, definitions: (definitions) ? definitions : defs });
+        required: required, definitions: definitions ? definitions : defs });
 };
 var parseType = function (type) {
     if (!type) {

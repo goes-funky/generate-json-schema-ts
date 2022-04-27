@@ -4,12 +4,12 @@ enum UntypedType {
   ANY = 'any',
   NEVER = 'never',
   UNDEFINED = 'undefined',
-  UNKNOWN = 'unknown'
+  UNKNOWN = 'unknown',
 }
 
 enum OptionalFieldPattern {
   QUESTION = 'fieldName?',
-  PIPE_UNDEFINED = 'Type | undefined'
+  PIPE_UNDEFINED = 'Type | undefined',
 }
 
 interface AllOptions {
@@ -39,18 +39,18 @@ const DEFAULT_OPTIONS: AllOptions = {
     source: {
       dir: 'src/schemas',
       encoding: 'utf-8',
-      recursive: true
+      recursive: true,
     },
     destination: {
       dir: 'src/generated',
       preClean: false,
-      indexFiles: true
-    }
+      indexFiles: true,
+    },
   },
   ts: {
     optionalFields: OptionalFieldPattern.QUESTION,
-    untyped: UntypedType.UNKNOWN
-  }
+    untyped: UntypedType.UNKNOWN,
+  },
 };
 
 const createOptions = (options: PartialDeep<AllOptions>): AllOptions => {
@@ -60,25 +60,18 @@ const createOptions = (options: PartialDeep<AllOptions>): AllOptions => {
       ...options.files,
       source: {
         ...DEFAULT_OPTIONS.files.source,
-        ...options.files?.source
+        ...options.files?.source,
       },
       destination: {
         ...DEFAULT_OPTIONS.files.destination,
-        ...options.files?.destination
-      }
+        ...options.files?.destination,
+      },
     },
     ts: {
       ...DEFAULT_OPTIONS.ts,
-      ...options.ts
-    }
+      ...options.ts,
+    },
   };
 };
 
-export {
-  OptionalFieldPattern,
-  UntypedType,
-  AllOptions,
-  Options,
-  DEFAULT_OPTIONS,
-  createOptions
-};
+export { OptionalFieldPattern, UntypedType, AllOptions, Options, DEFAULT_OPTIONS, createOptions };

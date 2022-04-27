@@ -43,7 +43,7 @@ const parseSchema = (rawSchema: RawSchema): Schema => {
     properties,
     additionalProperties,
     required,
-    definitions: (definitions) ? definitions : defs
+    definitions: definitions ? definitions : defs,
   };
 };
 
@@ -111,6 +111,4 @@ const parseRequired = (required?: string[]): Set<string> | undefined => {
   return new Set(required);
 };
 
-export {
-  parse
-};
+export { parse };

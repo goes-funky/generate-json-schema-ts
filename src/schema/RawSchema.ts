@@ -19,6 +19,4 @@ interface RawSchema {
   definitions?: Record<string, RawSchema>;
 }
 
-export {
-  RawSchema
-};
+export { RawSchema };

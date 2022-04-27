@@ -5,12 +5,12 @@ var options_1 = require("../options");
 var type_generator_1 = require("./type-generator");
 var objectGenerator = function (locatedSchema, gatheredInfo, inputInfo) {
     var schema = locatedSchema.schema;
-    if (!schema.type || !schema.type.has("object")) {
+    if (!schema.type || !schema.type.has('object')) {
         return;
     }
     try {
         var properties = propertiesGenerator(locatedSchema, gatheredInfo, inputInfo);
-        var output = properties.join("; ");
+        var output = properties.join('; ');
         if (locatedSchema.typeName) {
             return "export class " + locatedSchema.typeName + " {" + output + "};\n";
         }

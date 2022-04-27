@@ -58,7 +58,9 @@ var createIndexFiles = function (folderFiles) {
             var folder = _a[0], files = _a[1];
             var indexFileName = folder + "/index.ts";
             var contentLines = [];
-            Array.from(files).sort().forEach(function (file) {
+            Array.from(files)
+                .sort()
+                .forEach(function (file) {
                 var line = "export * from './" + file + "';";
                 contentLines.push(line);
             });

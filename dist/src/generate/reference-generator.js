@@ -38,9 +38,7 @@ var createFullRef = function (ref, gatheredInfo, inputInfo) {
     for (var _i = 0, _a = Array.from(inputInfo.idFileLocations); _i < _a.length; _i++) {
         var _b = _a[_i], id = _b[0], idFileLocation = _b[1];
         if (ref.startsWith(id)) {
-            var rest = id.endsWith("#")
-                ? ref.substring(id.length - 1)
-                : ref.substring(id.length);
+            var rest = id.endsWith('#') ? ref.substring(id.length - 1) : ref.substring(id.length);
             var innerRef = createLocalRef(rest);
             if (innerRef) {
                 addExternalReference(gatheredInfo.references, idFileLocation, innerRef);
@@ -56,7 +54,7 @@ var createRelativeRef = function (fileLocation, ref, gatheredInfo, inputInfo) {
         if (fileLocation.dir === idFileLocation.dir) {
             if (ref.startsWith(idFileLocation.fileName)) {
                 var rest = ref.substring(idFileLocation.fileName.length);
-                if (rest === "" || rest === "#") {
+                if (rest === '' || rest === '#') {
                     addExternalReference(gatheredInfo.references, idFileLocation);
                     return idFileLocation.fileName;
                 }

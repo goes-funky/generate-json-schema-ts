@@ -20,8 +20,4 @@ interface Schema {
   definitions?: Map<string, Schema>;
 }
 
-export {
-  SchemaPrimitive,
-  SchemaEnum,
-  Schema
-};
+export { SchemaPrimitive, SchemaEnum, Schema };

@@ -26,16 +26,20 @@ var walk_1 = require("./walk");
 var read = function (options) {
     return new Promise(function (resolve, reject) {
         var sourceDir = options.files.source.dir;
-        var absoluteDir = (path.isAbsolute(sourceDir))
+        var absoluteDir = path.isAbsolute(sourceDir)
             ? sourceDir
             : path.resolve(options.files.cwd || process.cwd(), sourceDir);
-        var filesPromise = (options.files.source.recursive)
+        var filesPromise = options.files.source.recursive
             ? walk_1.filesRecursive(absoluteDir)
             : walk_1.files(absoluteDir);
         var filesContent = new Map();
-        var addContentPromise = function (file) { return readContent(file, options)
-            .then(function (content) { filesContent.set(toFileLocation(file), content); })
-            .catch(reject); };
+        var addContentPromise = function (file) {
+            return readContent(file, options)
+                .then(function (content) {
+                filesContent.set(toFileLocation(file), content);
+            })
+                .catch(reject);
+        };
         filesPromise
             .then(function (files) { return files.map(addContentPromise); })
             .then(function (promises) { return Promise.all(promises); })
@@ -62,6 +66,6 @@ var toFileLocation = function (file) {
     var fileName = fileNameWithExt.substring(0, fileNameWithExt.indexOf('.'));
     return {
         dir: dir,
-        fileName: fileName
+        fileName: fileName,
     };
 };

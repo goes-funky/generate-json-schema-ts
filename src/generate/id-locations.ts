@@ -12,6 +12,4 @@ const idLocations = (fileSchemas: Map<FileLocation, Schema>): Map<string, FileLo
   return idLocations;
 };
 
-export {
-  idLocations
-};
+export { idLocations };

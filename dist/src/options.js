@@ -31,25 +31,25 @@ var DEFAULT_OPTIONS = {
         source: {
             dir: 'src/schemas',
             encoding: 'utf-8',
-            recursive: true
+            recursive: true,
         },
         destination: {
             dir: 'src/generated',
             preClean: false,
-            indexFiles: true
-        }
+            indexFiles: true,
+        },
     },
     ts: {
         optionalFields: OptionalFieldPattern.QUESTION,
-        untyped: UntypedType.UNKNOWN
-    }
+        untyped: UntypedType.UNKNOWN,
+    },
 };
 exports.DEFAULT_OPTIONS = DEFAULT_OPTIONS;
 var createOptions = function (options) {
     var _a, _b;
     return {
         files: __assign(__assign(__assign({}, DEFAULT_OPTIONS.files), options.files), { source: __assign(__assign({}, DEFAULT_OPTIONS.files.source), (_a = options.files) === null || _a === void 0 ? void 0 : _a.source), destination: __assign(__assign({}, DEFAULT_OPTIONS.files.destination), (_b = options.files) === null || _b === void 0 ? void 0 : _b.destination) }),
-        ts: __assign(__assign({}, DEFAULT_OPTIONS.ts), options.ts)
+        ts: __assign(__assign({}, DEFAULT_OPTIONS.ts), options.ts),
     };
 };
 exports.createOptions = createOptions;

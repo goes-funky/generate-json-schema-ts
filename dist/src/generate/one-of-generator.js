@@ -12,7 +12,7 @@ var oneOfGenerator = function (locatedSchema, gatheredInfo, inputInfo) {
     schema.oneOf.forEach(function (elementSchema) {
         var elementLocatedSchema = {
             fileLocation: locatedSchema.fileLocation,
-            schema: elementSchema
+            schema: elementSchema,
         };
         var elementContent = type_generator_1.typeGenerator(elementLocatedSchema, gatheredInfo, inputInfo);
         lines.push(elementContent);

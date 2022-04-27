@@ -25,6 +25,6 @@ var typeGenerator = function (locatedSchema, gatheredInfo, inputInfo) {
             return output;
         }
     }
-    return "unknown";
+    return 'unknown';
 };
 exports.typeGenerator = typeGenerator;

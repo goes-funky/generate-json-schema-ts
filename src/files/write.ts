@@ -38,10 +38,12 @@ const createIndexFiles = (folderFiles: Map<string, Set<string>>): Promise<void> 
     Array.from(folderFiles.entries()).forEach(([folder, files]) => {
       const indexFileName = `${folder}/index.ts`;
       const contentLines: string[] = [];
-      Array.from(files).sort().forEach((file) => {
-        const line = `export * from './${file}';`;
-        contentLines.push(line);
-      });
+      Array.from(files)
+        .sort()
+        .forEach((file) => {
+          const line = `export * from './${file}';`;
+          contentLines.push(line);
+        });
       const content: string = contentLines.join('\n');
       promises.push(writeContent(content, indexFileName));
     });
@@ -80,6 +82,4 @@ const mkdirs = (absoluteFile: string): Promise<void> => {
   });
 };
 
-export {
-  write
-};
+export { write };

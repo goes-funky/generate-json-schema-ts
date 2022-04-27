@@ -4,6 +4,4 @@ interface References {
   schema: Map<FileLocation, Set<string>>;
 }
 
-export {
-  References
-};
+export { References };

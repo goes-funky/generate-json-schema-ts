@@ -5,11 +5,11 @@ var collection_generator_1 = require("./collection-generator");
 var object_generator_1 = require("./object-generator");
 var tuple_generator_1 = require("./tuple-generator");
 var primitiveTypes = new Map(Object.entries({
-    null: "null",
-    boolean: "boolean",
-    integer: "number",
-    number: "number",
-    string: "string",
+    null: 'null',
+    boolean: 'boolean',
+    integer: 'number',
+    number: 'number',
+    string: 'string',
 }));
 var primitiveGenerator = function (locatedSchema) {
     var schemaTypes = locatedSchema.schema.type;
@@ -31,13 +31,9 @@ var primitiveGenerator = function (locatedSchema) {
     if (tsTypes.length == 1) {
         return tsTypes[0];
     }
-    return "(" + tsTypes.join(" | ") + ")";
+    return "(" + tsTypes.join(' | ') + ")";
 };
-var generators = [
-    collection_generator_1.collectionGenerator,
-    tuple_generator_1.tupleGenerator,
-    object_generator_1.objectGenerator,
-];
+var generators = [collection_generator_1.collectionGenerator, tuple_generator_1.tupleGenerator, object_generator_1.objectGenerator];
 var basicGenerator = function (locatedSchema, gatheredInfo, inputInfo) {
     var schemaTypes = locatedSchema.schema.type;
     if (!schemaTypes || schemaTypes.size === 0) {
@@ -64,6 +60,6 @@ var basicGenerator = function (locatedSchema, gatheredInfo, inputInfo) {
     if (tsTypes.length == 1) {
         return tsTypes[0];
     }
-    return tsTypes.join(" | ");
+    return tsTypes.join(' | ');
 };
 exports.basicGenerator = basicGenerator;

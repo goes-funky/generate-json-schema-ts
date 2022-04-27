@@ -52,7 +52,7 @@ var fileGenerator = function (locatedSchema, inputInfo) {
         var named = namedGenerator(locatedSchema.fileLocation, gatheredInfo, inputInfo);
         var imports = importsGenerator(locatedSchema.fileLocation, references);
         var oneOfs = oneOfTypesGenerator(gatheredInfo.oneOfTypes);
-        return (util_1.filteredJoin([header, imports, schemaContent, named, definitions, oneOfs], '\n\n') + '\n');
+        return util_1.filteredJoin([header, imports, schemaContent, named, definitions, oneOfs], '\n\n') + '\n';
     }
     catch (err) {
         throw new Error("fileGenerator: " + locatedSchema.fileLocation.dir + "/" + locatedSchema.fileLocation.fileName + ": " + err);

@@ -5,11 +5,7 @@ const constantGenerator: TypeGenerator = (locatedSchema: LocatedSchema): string 
   if (constant === undefined) {
     return undefined;
   }
-  return (typeof constant === 'string')
-    ? `'${constant}'`
-    : `${constant}`;
+  return typeof constant === 'string' ? `'${constant}'` : `${constant}`;
 };
 
-export {
-  constantGenerator
-};
+export { constantGenerator };

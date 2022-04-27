@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const READ_OPTIONS: { withFileTypes: true; } = { withFileTypes: true };
+const READ_OPTIONS: { withFileTypes: true } = { withFileTypes: true };
 const flatten = <T>(previous: T[], current: T[]) => previous.concat(current);
 
 const files = (dir: string): Promise<string[]> => {
@@ -45,7 +45,4 @@ const filesRecursive = (dir: string): Promise<string[]> => {
   });
 };
 
-export {
-  files,
-  filesRecursive
-};
+export { files, filesRecursive };

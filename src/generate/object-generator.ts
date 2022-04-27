@@ -1,31 +1,22 @@
-import { OptionalFieldPattern } from "../options";
-import { Schema } from "../schema";
-import {
-  LocatedSchema,
-  SchemaGatheredInfo,
-  SchemaInputInfo,
-  TypeGenerator,
-} from "./TypeGenerator";
-import { typeGenerator } from "./type-generator";
+import { OptionalFieldPattern } from '../options';
+import { Schema } from '../schema';
+import { LocatedSchema, SchemaGatheredInfo, SchemaInputInfo, TypeGenerator } from './TypeGenerator';
+import { typeGenerator } from './type-generator';
 
 const objectGenerator: TypeGenerator = (
   locatedSchema: LocatedSchema,
   gatheredInfo: SchemaGatheredInfo,
-  inputInfo: SchemaInputInfo
+  inputInfo: SchemaInputInfo,
 ): string | undefined => {
   const schema: Schema = locatedSchema.schema;
-  if (!schema.type || !schema.type.has("object")) {
+  if (!schema.type || !schema.type.has('object')) {
     return;
   }
 
   try {
-    const properties = propertiesGenerator(
-      locatedSchema,
-      gatheredInfo,
-      inputInfo
-    );
+    const properties = propertiesGenerator(locatedSchema, gatheredInfo, inputInfo);
 
-    const output = properties.join("; ");
+    const output = properties.join('; ');
 
     if (locatedSchema.typeName) {
       return `export class ${locatedSchema.typeName} {${output}};\n`;
@@ -40,7 +31,7 @@ const objectGenerator: TypeGenerator = (
 const propertiesGenerator = (
   locatedSchema: LocatedSchema,
   gatheredInfo: SchemaGatheredInfo,
-  inputInfo: SchemaInputInfo
+  inputInfo: SchemaInputInfo,
 ): string[] => {
   const schema = locatedSchema.schema;
   const hasProperties = schema.properties && schema.properties.size;
@@ -52,13 +43,7 @@ const propertiesGenerator = (
 
   if (schema.properties) {
     schema.properties.forEach((propertySchema, name) => {
-      const output = propertyGenerator(
-        locatedSchema,
-        gatheredInfo,
-        inputInfo,
-        name,
-        propertySchema
-      );
+      const output = propertyGenerator(locatedSchema, gatheredInfo, inputInfo, name, propertySchema);
       if (output) {
         properties.push(output);
       }
@@ -87,7 +72,7 @@ const propertyGenerator = (
   gatheredInfo: SchemaGatheredInfo,
   inputInfo: SchemaInputInfo,
   name: string,
-  propertySchema: Schema
+  propertySchema: Schema,
 ): string | undefined => {
   const schema: Schema = locatedSchema.schema;
   if (!schema.type) {
@@ -99,11 +84,7 @@ const propertyGenerator = (
     schema: propertySchema,
   };
 
-  const type: string | undefined = typeGenerator(
-    propertyLocatedSchema,
-    gatheredInfo,
-    inputInfo
-  );
+  const type: string | undefined = typeGenerator(propertyLocatedSchema, gatheredInfo, inputInfo);
   if (!type) {
     throw new Error(`unable to generate type for property ${name}`);
   }

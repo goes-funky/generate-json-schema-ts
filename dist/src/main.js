@@ -7,12 +7,12 @@ var files_1 = require("./files");
 var schema_1 = require("./schema");
 var main = function (options) {
     var allOptions = options_1.createOptions(options);
-    return Promise.resolve()
+    return (Promise.resolve()
         .then(function () { return files_1.clean(allOptions); })
         .then(function () { return files_1.read(allOptions); })
         .then(function (fileContents) { return schema_1.parse(fileContents); })
         .then(function (fileSchemas) { return generate_1.generate(fileSchemas, allOptions); })
         .then(function (filesContent) { return files_1.write(filesContent, allOptions); })
-        .catch(console.error);
+        .catch(console.error));
 };
 exports.main = main;
