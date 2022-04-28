@@ -1,60 +1,55 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.parse = void 0;
-var parse = function (files) {
-    var schemas = new Map();
-    files.forEach(function (content, fileLocation) {
-        var rawSchema = JSON.parse(content);
-        var schema = parseSchema(rawSchema);
+const parse = (files) => {
+    const schemas = new Map();
+    files.forEach((content, fileLocation) => {
+        const rawSchema = JSON.parse(content);
+        const schema = parseSchema(rawSchema);
         schemas.set(fileLocation, schema);
     });
     return schemas;
 };
 exports.parse = parse;
-var parseSchema = function (rawSchema) {
-    var type = parseType(rawSchema.type);
-    var _enum = parseEnum(rawSchema.enum);
-    var items = parseItems(rawSchema.items);
-    var additionalItems = parseAdditional(rawSchema.additionalItems);
-    var allOf = parseArray(rawSchema.allOf);
-    var anyOf = parseArray(rawSchema.anyOf);
-    var oneOf = parseArray(rawSchema.oneOf);
-    var properties = parseRecord(rawSchema.properties);
-    var additionalProperties = parseAdditional(rawSchema.additionalProperties);
-    var required = parseRequired(rawSchema.required);
-    var defs = parseRecord(rawSchema.$defs);
-    var definitions = parseRecord(rawSchema.definitions);
+const parseSchema = (rawSchema) => {
+    const type = parseType(rawSchema.type);
+    const _enum = parseEnum(rawSchema.enum);
+    const items = parseItems(rawSchema.items);
+    const additionalItems = parseAdditional(rawSchema.additionalItems);
+    const allOf = parseArray(rawSchema.allOf);
+    const anyOf = parseArray(rawSchema.anyOf);
+    const oneOf = parseArray(rawSchema.oneOf);
+    const properties = parseRecord(rawSchema.properties);
+    const additionalProperties = parseAdditional(rawSchema.additionalProperties);
+    const required = parseRequired(rawSchema.required);
+    const defs = parseRecord(rawSchema.$defs);
+    const definitions = parseRecord(rawSchema.definitions);
     if (defs && definitions) {
-        defs === null || defs === void 0 ? void 0 : defs.forEach(function (schema, key) {
-            definitions === null || definitions === void 0 ? void 0 : definitions.set(key, schema);
+        defs?.forEach((schema, key) => {
+            definitions?.set(key, schema);
         });
     }
-    return __assign(__assign({}, rawSchema), { type: type, enum: _enum, items: items,
-        additionalItems: additionalItems,
-        allOf: allOf,
-        anyOf: anyOf,
-        oneOf: oneOf,
-        properties: properties,
-        additionalProperties: additionalProperties,
-        required: required, definitions: definitions ? definitions : defs });
+    return {
+        ...rawSchema,
+        type,
+        enum: _enum,
+        items,
+        additionalItems,
+        allOf,
+        anyOf,
+        oneOf,
+        properties,
+        additionalProperties,
+        required,
+        definitions: definitions ? definitions : defs,
+    };
 };
-var parseType = function (type) {
+const parseType = (type) => {
     if (!type) {
         return undefined;
     }
     if (typeof type === 'string') {
-        var set = new Set();
+        const set = new Set();
         set.add(type);
         return set;
     }
@@ -62,13 +57,13 @@ var parseType = function (type) {
         return new Set(type);
     }
 };
-var parseEnum = function (_enum) {
+const parseEnum = (_enum) => {
     if (!_enum) {
         return undefined;
     }
     return new Set(_enum);
 };
-var parseItems = function (items) {
+const parseItems = (items) => {
     if (!items) {
         return undefined;
     }
@@ -77,31 +72,31 @@ var parseItems = function (items) {
     }
     return parseSchema(items);
 };
-var parseAdditional = function (additional) {
+const parseAdditional = (additional) => {
     if (!additional) {
         return additional;
     }
     return parseSchema(additional);
 };
-var parseArray = function (array) {
+const parseArray = (array) => {
     if (!array) {
         return undefined;
     }
     return array.map(parseSchema);
 };
-var parseRecord = function (record) {
+const parseRecord = (record) => {
     if (!record) {
         return undefined;
     }
-    var parsed = new Map();
-    for (var key in record) {
-        var rawSchema = record[key];
-        var schema = parseSchema(rawSchema);
+    const parsed = new Map();
+    for (const key in record) {
+        const rawSchema = record[key];
+        const schema = parseSchema(rawSchema);
         parsed.set(key, schema);
     }
     return parsed;
 };
-var parseRequired = function (required) {
+const parseRequired = (required) => {
     if (!required) {
         return undefined;
     }

@@ -1,23 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.collectionGenerator = void 0;
-var type_generator_1 = require("./type-generator");
-var collectionGenerator = function (locatedSchema, gatheredInfo, inputInfo) {
-    var schema = locatedSchema.schema;
+const type_generator_1 = require("./type-generator");
+const collectionGenerator = (locatedSchema, gatheredInfo, inputInfo) => {
+    const schema = locatedSchema.schema;
     if (!schema.type || !schema.type.has('array') || !schema.items || Array.isArray(schema.items)) {
         return;
     }
-    var itemsLocatedSchema = {
+    const itemsLocatedSchema = {
         fileLocation: locatedSchema.fileLocation,
         schema: schema.items,
     };
-    var elementType = type_generator_1.typeGenerator(itemsLocatedSchema, gatheredInfo, inputInfo);
+    const elementType = (0, type_generator_1.typeGenerator)(itemsLocatedSchema, gatheredInfo, inputInfo);
     if (!elementType) {
-        throw new Error("invalid items");
+        throw new Error(`invalid items`);
     }
-    var output = schema.uniqueItems ? "Set<" + elementType + ">" : elementType + "[]";
+    const output = schema.uniqueItems ? `Set<${elementType}>` : `${elementType}[]`;
     if (locatedSchema.typeName) {
-        return "export type " + locatedSchema.typeName + " = " + output + ";";
+        return `export type ${locatedSchema.typeName} = ${output};`;
     }
     return output;
 };

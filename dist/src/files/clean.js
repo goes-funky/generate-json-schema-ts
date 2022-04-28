@@ -23,24 +23,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.clean = void 0;
-var path = __importStar(require("path"));
-var rimraf_1 = __importDefault(require("rimraf"));
-var clean = function (options) {
-    return new Promise(function (resolve, reject) {
+const path = __importStar(require("path"));
+const rimraf_1 = __importDefault(require("rimraf"));
+const clean = (options) => {
+    return new Promise((resolve, reject) => {
         if (!options.files.destination.preClean) {
             resolve();
         }
         else {
-            var cwd = options.files.cwd || process.cwd();
-            var absoluteDir = path.resolve(cwd, options.files.destination.dir);
+            const cwd = options.files.cwd || process.cwd();
+            const absoluteDir = path.resolve(cwd, options.files.destination.dir);
             rmrf(absoluteDir).then(resolve).catch(reject);
         }
     });
 };
 exports.clean = clean;
-var rmrf = function (dir) {
-    return new Promise(function (resolve, reject) {
-        var func = function (err) {
+const rmrf = (dir) => {
+    return new Promise((resolve, reject) => {
+        const func = (err) => {
             if (err) {
                 reject();
             }
@@ -48,6 +48,6 @@ var rmrf = function (dir) {
                 resolve();
             }
         };
-        rimraf_1.default(dir, func);
+        (0, rimraf_1.default)(dir, func);
     });
 };

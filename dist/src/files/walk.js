@@ -20,13 +20,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.filesRecursive = exports.files = void 0;
-var fs = __importStar(require("fs"));
-var path = __importStar(require("path"));
-var READ_OPTIONS = { withFileTypes: true };
-var flatten = function (previous, current) { return previous.concat(current); };
-var files = function (dir) {
-    return new Promise(function (resolve, reject) {
-        fs.readdir(dir, READ_OPTIONS, function (err, files) {
+const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
+const READ_OPTIONS = { withFileTypes: true };
+const flatten = (previous, current) => previous.concat(current);
+const files = (dir) => {
+    return new Promise((resolve, reject) => {
+        fs.readdir(dir, READ_OPTIONS, (err, files) => {
             if (err) {
                 reject(err);
             }
@@ -34,17 +34,17 @@ var files = function (dir) {
                 resolve([]);
             }
             else {
-                var resolveSubPath = function (file) { return path.resolve(dir, file.name); };
-                var subFiles = files.filter(function (file) { return file.isFile(); }).map(resolveSubPath);
+                const resolveSubPath = (file) => path.resolve(dir, file.name);
+                const subFiles = files.filter((file) => file.isFile()).map(resolveSubPath);
                 resolve(subFiles);
             }
         });
     });
 };
 exports.files = files;
-var filesRecursive = function (dir) {
-    return new Promise(function (resolve, reject) {
-        fs.readdir(dir, READ_OPTIONS, function (err, files) {
+const filesRecursive = (dir) => {
+    return new Promise((resolve, reject) => {
+        fs.readdir(dir, READ_OPTIONS, (err, files) => {
             if (err) {
                 reject(err);
             }
@@ -52,16 +52,16 @@ var filesRecursive = function (dir) {
                 resolve([]);
             }
             else {
-                var resolveSubPath = function (file) { return path.resolve(dir, file.name); };
-                var subFiles_1 = files.filter(function (file) { return file.isFile(); }).map(resolveSubPath);
-                var subDirs = files.filter(function (file) { return file.isDirectory(); }).map(resolveSubPath);
+                const resolveSubPath = (file) => path.resolve(dir, file.name);
+                const subFiles = files.filter((file) => file.isFile()).map(resolveSubPath);
+                const subDirs = files.filter((file) => file.isDirectory()).map(resolveSubPath);
                 if (subDirs.length === 0) {
-                    resolve(subFiles_1);
+                    resolve(subFiles);
                 }
                 else {
                     Promise.all(subDirs.map(filesRecursive))
-                        .then(function (subDirFiles) { return subDirFiles.reduce(flatten, []); })
-                        .then(function (allSubDirFiles) { return subFiles_1.concat(allSubDirFiles); })
+                        .then((subDirFiles) => subDirFiles.reduce(flatten, []))
+                        .then((allSubDirFiles) => subFiles.concat(allSubDirFiles))
                         .then(resolve)
                         .catch(reject);
                 }

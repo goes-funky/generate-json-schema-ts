@@ -1,23 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.oneOfGenerator = void 0;
-var util_1 = require("../util");
-var type_generator_1 = require("./type-generator");
-var oneOfGenerator = function (locatedSchema, gatheredInfo, inputInfo) {
-    var schema = locatedSchema.schema;
+const util_1 = require("../util");
+const type_generator_1 = require("./type-generator");
+const oneOfGenerator = (locatedSchema, gatheredInfo, inputInfo) => {
+    const schema = locatedSchema.schema;
     if (!schema.oneOf || schema.oneOf.length === 0) {
         return undefined;
     }
-    var lines = [];
-    schema.oneOf.forEach(function (elementSchema) {
-        var elementLocatedSchema = {
+    const lines = [];
+    schema.oneOf.forEach((elementSchema) => {
+        const elementLocatedSchema = {
             fileLocation: locatedSchema.fileLocation,
             schema: elementSchema,
         };
-        var elementContent = type_generator_1.typeGenerator(elementLocatedSchema, gatheredInfo, inputInfo);
+        const elementContent = (0, type_generator_1.typeGenerator)(elementLocatedSchema, gatheredInfo, inputInfo);
         lines.push(elementContent);
     });
-    var filteredLines = util_1.filtered(lines);
+    const filteredLines = (0, util_1.filtered)(lines);
     if (filteredLines.length === 0) {
         return undefined;
     }
@@ -26,9 +26,9 @@ var oneOfGenerator = function (locatedSchema, gatheredInfo, inputInfo) {
     }
     else {
         gatheredInfo.oneOfTypes.add(filteredLines.length);
-        var typeName = "OneOf_" + filteredLines.length;
-        var combinedTypeNames = filteredLines.join(', ');
-        return typeName + "<" + combinedTypeNames + ">";
+        const typeName = `OneOf_${filteredLines.length}`;
+        const combinedTypeNames = filteredLines.join(', ');
+        return `${typeName}<${combinedTypeNames}>`;
     }
 };
 exports.oneOfGenerator = oneOfGenerator;

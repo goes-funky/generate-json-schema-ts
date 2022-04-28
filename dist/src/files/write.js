@@ -20,21 +20,21 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.write = void 0;
-var fs = __importStar(require("fs"));
-var path = __importStar(require("path"));
-var write = function (filesContent, options) {
-    var promises = [];
-    return new Promise(function (resolve, reject) {
-        var cwd = options.files.cwd || process.cwd();
-        var rootSourceDir = path.resolve(cwd, options.files.source.dir);
-        var rootDestinationDir = path.resolve(cwd, options.files.destination.dir);
-        var folderFiles = new Map();
-        filesContent.forEach(function (content, fileLocation) {
-            var relativeDir = path.relative(rootSourceDir, fileLocation.dir);
-            var absoluteDir = path.resolve(rootDestinationDir, relativeDir);
-            var absoluteFile = path.resolve(absoluteDir, fileLocation.fileName) + '.ts';
-            var promise = writeContent(content, absoluteFile);
-            var files = folderFiles.get(absoluteDir);
+const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
+const write = (filesContent, options) => {
+    const promises = [];
+    return new Promise((resolve, reject) => {
+        const cwd = options.files.cwd || process.cwd();
+        const rootSourceDir = path.resolve(cwd, options.files.source.dir);
+        const rootDestinationDir = path.resolve(cwd, options.files.destination.dir);
+        const folderFiles = new Map();
+        filesContent.forEach((content, fileLocation) => {
+            const relativeDir = path.relative(rootSourceDir, fileLocation.dir);
+            const absoluteDir = path.resolve(rootDestinationDir, relativeDir);
+            const absoluteFile = path.resolve(absoluteDir, fileLocation.fileName) + '.ts';
+            const promise = writeContent(content, absoluteFile);
+            let files = folderFiles.get(absoluteDir);
             if (!files) {
                 files = new Set();
                 folderFiles.set(absoluteDir, files);
@@ -46,37 +46,36 @@ var write = function (filesContent, options) {
             promises.push(createIndexFiles(folderFiles));
         }
         Promise.all(promises)
-            .then(function () { return resolve(); })
+            .then(() => resolve())
             .catch(reject);
     });
 };
 exports.write = write;
-var createIndexFiles = function (folderFiles) {
-    return new Promise(function (resolve, reject) {
-        var promises = [];
-        Array.from(folderFiles.entries()).forEach(function (_a) {
-            var folder = _a[0], files = _a[1];
-            var indexFileName = folder + "/index.ts";
-            var contentLines = [];
+const createIndexFiles = (folderFiles) => {
+    return new Promise((resolve, reject) => {
+        const promises = [];
+        Array.from(folderFiles.entries()).forEach(([folder, files]) => {
+            const indexFileName = `${folder}/index.ts`;
+            const contentLines = [];
             Array.from(files)
                 .sort()
-                .forEach(function (file) {
-                var line = "export * from './" + file + "';";
+                .forEach((file) => {
+                const line = `export * from './${file}';`;
                 contentLines.push(line);
             });
-            var content = contentLines.join('\n');
+            const content = contentLines.join('\n');
             promises.push(writeContent(content, indexFileName));
         });
         Promise.all(promises)
-            .then(function () { return resolve(); })
+            .then(() => resolve())
             .catch(reject);
     });
 };
-var writeContent = function (content, absoluteFile) {
-    return new Promise(function (resolve, reject) {
+const writeContent = (content, absoluteFile) => {
+    return new Promise((resolve, reject) => {
         mkdirs(absoluteFile)
-            .then(function () {
-            fs.writeFile(absoluteFile, content, function (err) {
+            .then(() => {
+            fs.writeFile(absoluteFile, content, (err) => {
                 if (err) {
                     reject(err);
                 }
@@ -88,10 +87,10 @@ var writeContent = function (content, absoluteFile) {
             .catch(reject);
     });
 };
-var mkdirs = function (absoluteFile) {
-    return new Promise(function (resolve, reject) {
-        var dir = absoluteFile.substring(0, absoluteFile.lastIndexOf(path.sep));
-        fs.mkdir(dir, { recursive: true }, function (err) {
+const mkdirs = (absoluteFile) => {
+    return new Promise((resolve, reject) => {
+        const dir = absoluteFile.substring(0, absoluteFile.lastIndexOf(path.sep));
+        fs.mkdir(dir, { recursive: true }, (err) => {
             if (err) {
                 reject(err);
             }

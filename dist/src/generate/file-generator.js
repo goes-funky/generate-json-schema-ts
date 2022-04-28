@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
@@ -31,75 +20,82 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fileGenerator = void 0;
-var path = __importStar(require("path"));
-var util_1 = require("../util");
-var strings_1 = require("../util/strings");
-var OneOf_generator_1 = require("./OneOf-generator");
-var type_generator_1 = require("./type-generator");
-var fileGenerator = function (locatedSchema, inputInfo) {
+const path = __importStar(require("path"));
+const util_1 = require("../util");
+const strings_1 = require("../util/strings");
+const OneOf_generator_1 = require("./OneOf-generator");
+const type_generator_1 = require("./type-generator");
+const fileGenerator = (locatedSchema, inputInfo) => {
     try {
-        var header = "// Code generated from " + locatedSchema.fileLocation.fileName + " DO NOT EDIT.";
-        var references = {
+        const header = `// Code generated from ${locatedSchema.fileLocation.fileName} DO NOT EDIT.`;
+        const references = {
             schema: new Map(),
         };
-        var gatheredInfo = {
+        const gatheredInfo = {
             namedSchemas: new Map(),
-            references: references,
+            references,
             oneOfTypes: new Set(),
         };
-        var schemaContent = schemaContentGenerator(locatedSchema, gatheredInfo, inputInfo);
-        var definitions = mapGenerator(locatedSchema.fileLocation, locatedSchema.schema.definitions, gatheredInfo, inputInfo);
-        var named = namedGenerator(locatedSchema.fileLocation, gatheredInfo, inputInfo);
-        var imports = importsGenerator(locatedSchema.fileLocation, references);
-        var oneOfs = oneOfTypesGenerator(gatheredInfo.oneOfTypes);
-        return util_1.filteredJoin([header, imports, schemaContent, named, definitions, oneOfs], '\n\n') + '\n';
+        const schemaContent = schemaContentGenerator(locatedSchema, gatheredInfo, inputInfo);
+        const definitions = mapGenerator(locatedSchema.fileLocation, locatedSchema.schema.definitions, gatheredInfo, inputInfo);
+        const named = namedGenerator(locatedSchema.fileLocation, gatheredInfo, inputInfo);
+        const imports = importsGenerator(locatedSchema.fileLocation, references);
+        const oneOfs = oneOfTypesGenerator(gatheredInfo.oneOfTypes);
+        return (0, util_1.filteredJoin)([header, imports, schemaContent, named, definitions, oneOfs], '\n\n') + '\n';
     }
     catch (err) {
-        throw new Error("fileGenerator: " + locatedSchema.fileLocation.dir + "/" + locatedSchema.fileLocation.fileName + ": " + err);
+        throw new Error(`fileGenerator: ${locatedSchema.fileLocation.dir}/${locatedSchema.fileLocation.fileName}: ${err}`);
     }
 };
 exports.fileGenerator = fileGenerator;
-var schemaContentGenerator = function (locatedSchema, gatheredInfo, inputInfo, schemaName) {
-    var typeName = typeNameGenerator(schemaName || locatedSchema.fileLocation.fileName);
-    var output = type_generator_1.typeGenerator(__assign(__assign({}, locatedSchema), { typeName: typeName }), gatheredInfo, inputInfo);
+const schemaContentGenerator = (locatedSchema, gatheredInfo, inputInfo, schemaName) => {
+    const typeName = typeNameGenerator(schemaName || locatedSchema.fileLocation.fileName);
+    const output = (0, type_generator_1.typeGenerator)({
+        ...locatedSchema,
+        typeName: typeName,
+    }, gatheredInfo, inputInfo);
     if (output == 'unknown') {
         return;
     }
     return output;
 };
-var importsGenerator = function (fileLocation, references) {
+const importsGenerator = (fileLocation, references) => {
     if (references.schema.size === 0) {
         return undefined;
     }
-    var content = [];
+    const content = [];
     content.push(importMapGenerator(fileLocation, references.schema));
-    var defined = util_1.filtered(content);
+    const defined = (0, util_1.filtered)(content);
     return defined.join('\n');
 };
-var importMapGenerator = function (fileLocation, references) {
+const importMapGenerator = (fileLocation, references) => {
     if (references.size === 0) {
         return undefined;
     }
-    var imports = [];
-    references.forEach(function (names, referenceFileLocation) {
+    const imports = [];
+    references.forEach((names, referenceFileLocation) => {
         if (names.size > 0) {
-            var combinedNames = Array.from(names).sort().join(', ');
-            var importPath = tsPathGenerator(path.normalize(path.relative(fileLocation.dir, referenceFileLocation.dir)));
-            var file = referenceFileLocation.fileName.length === 0 ? '' : "/" + referenceFileLocation.fileName;
-            imports.push("import { " + combinedNames + " } from '" + importPath + file + "';");
+            const combinedNames = Array.from(names).sort().join(', ');
+            const importPath = tsPathGenerator(path.normalize(path.relative(fileLocation.dir, referenceFileLocation.dir)));
+            const file = referenceFileLocation.fileName.length === 0 ? '' : `/${referenceFileLocation.fileName}`;
+            imports.push(`import { ${combinedNames} } from '${importPath}${file}';`);
         }
     });
     return imports.join('\n');
 };
-var namedGenerator = function (fileLocation, gatheredInfo, inputInfo) {
+const namedGenerator = (fileLocation, gatheredInfo, inputInfo) => {
     if (gatheredInfo.namedSchemas.size === 0) {
         return undefined;
     }
-    var content = [];
+    const content = [];
+    /* eslint-disable no-constant-condition */
     while (true) {
-        var map = gatheredInfo.namedSchemas;
-        gatheredInfo = __assign(__assign({}, gatheredInfo), { namedSchemas: new Map() });
-        var mapContent = mapGenerator(fileLocation, map, gatheredInfo, inputInfo);
+        const map = gatheredInfo.namedSchemas;
+        gatheredInfo = {
+            ...gatheredInfo,
+            namedSchemas: new Map(),
+        };
+        const mapContent = mapGenerator(fileLocation, map, gatheredInfo, inputInfo);
         if (mapContent) {
             content.push(mapContent);
         }
@@ -108,39 +104,41 @@ var namedGenerator = function (fileLocation, gatheredInfo, inputInfo) {
         }
     }
 };
-var oneOfTypesGenerator = function (typeCounts) {
+const oneOfTypesGenerator = (typeCounts) => {
     if (typeCounts.size === 0) {
         return undefined;
     }
-    var oneOfTypeLines = [];
-    typeCounts.forEach(function (typeCount) {
-        var oneOfType = OneOf_generator_1.OneOfNGenerator(typeCount);
+    const oneOfTypeLines = [];
+    typeCounts.forEach((typeCount) => {
+        const oneOfType = (0, OneOf_generator_1.OneOfNGenerator)(typeCount);
         if (oneOfType) {
             oneOfTypeLines.push(oneOfType);
         }
     });
     return oneOfTypeLines.join('\n');
 };
-var mapGenerator = function (fileLocation, map, gatheredInfo, inputInfo) {
+const mapGenerator = (fileLocation, map, gatheredInfo, inputInfo) => {
     if (!map || map.size === 0) {
         return undefined;
     }
-    var content = [];
-    map.forEach(function (namedSchema, name) {
-        var namedLocatedSchema = {
-            fileLocation: fileLocation,
+    const content = [];
+    map.forEach((namedSchema, name) => {
+        const namedLocatedSchema = {
+            fileLocation,
             schema: namedSchema,
         };
-        var schemaContent = schemaContentGenerator(namedLocatedSchema, gatheredInfo, inputInfo, name);
+        const schemaContent = schemaContentGenerator(namedLocatedSchema, gatheredInfo, inputInfo, name);
         if (schemaContent) {
             content.push(schemaContent);
         }
     });
     return content.join('\n');
 };
-var typeNameGenerator = function (fileName) {
-    return strings_1.classify(fileName);
+const typeNameGenerator = (fileName) => {
+    return (0, strings_1.classify)(fileName);
+    // const usableChars: string = fileName.replace(/[^a-zA-Z0-9_]/g, "");
+    // return usableChars.length > 0 && usableChars.match(/^[a-zA-Z_]/)
+    //   ? usableChars
+    //   : "_" + usableChars;
 };
-var tsPathGenerator = function (relativePath) {
-    return relativePath.startsWith('.') ? relativePath : '.' + path.sep + relativePath;
-};
+const tsPathGenerator = (relativePath) => relativePath.startsWith('.') ? relativePath : '.' + path.sep + relativePath;

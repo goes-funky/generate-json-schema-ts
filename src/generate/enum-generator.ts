@@ -13,7 +13,7 @@ const enumGenerator: TypeGenerator = (locatedSchema: LocatedSchema): string | un
   }
 
   if (locatedSchema.typeName) {
-    const values = Array.from(schema.enum).map((primitive) => `${classify(primitive as string)} = '${primitive}'`);
+    const values = Array.from(schema.enum).map((primitive) => `${normalize(primitive as string)} = '${primitive}'`);
     const output = `{${values.join(', ')}}`;
 
     return `export enum ${locatedSchema.typeName} ${output};\n`;
@@ -22,6 +22,10 @@ const enumGenerator: TypeGenerator = (locatedSchema: LocatedSchema): string | un
   const values = Array.from(schema.enum).map((primitive) => `'${primitive}'`);
   const output = values.join(' | ');
   return `(${output})`;
+};
+
+const normalize = (str: string): string => {
+  return classify(str.replaceAll(/[(\[<>\])]/g, ''));
 };
 
 export { enumGenerator };

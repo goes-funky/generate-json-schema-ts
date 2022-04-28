@@ -20,37 +20,35 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.read = void 0;
-var fs = __importStar(require("fs"));
-var path = __importStar(require("path"));
-var walk_1 = require("./walk");
-var read = function (options) {
-    return new Promise(function (resolve, reject) {
-        var sourceDir = options.files.source.dir;
-        var absoluteDir = path.isAbsolute(sourceDir)
+const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
+const walk_1 = require("./walk");
+const read = (options) => {
+    return new Promise((resolve, reject) => {
+        const sourceDir = options.files.source.dir;
+        const absoluteDir = path.isAbsolute(sourceDir)
             ? sourceDir
             : path.resolve(options.files.cwd || process.cwd(), sourceDir);
-        var filesPromise = options.files.source.recursive
-            ? walk_1.filesRecursive(absoluteDir)
-            : walk_1.files(absoluteDir);
-        var filesContent = new Map();
-        var addContentPromise = function (file) {
-            return readContent(file, options)
-                .then(function (content) {
-                filesContent.set(toFileLocation(file), content);
-            })
-                .catch(reject);
-        };
+        const filesPromise = options.files.source.recursive
+            ? (0, walk_1.filesRecursive)(absoluteDir)
+            : (0, walk_1.files)(absoluteDir);
+        const filesContent = new Map();
+        const addContentPromise = (file) => readContent(file, options)
+            .then((content) => {
+            filesContent.set(toFileLocation(file), content);
+        })
+            .catch(reject);
         filesPromise
-            .then(function (files) { return files.map(addContentPromise); })
-            .then(function (promises) { return Promise.all(promises); })
-            .then(function () { return resolve(filesContent); })
+            .then((files) => files.map(addContentPromise))
+            .then((promises) => Promise.all(promises))
+            .then(() => resolve(filesContent))
             .catch(reject);
     });
 };
 exports.read = read;
-var readContent = function (file, options) {
-    return new Promise(function (resolve, reject) {
-        fs.readFile(file, { encoding: options.files.source.encoding }, function (err, data) {
+const readContent = (file, options) => {
+    return new Promise((resolve, reject) => {
+        fs.readFile(file, { encoding: options.files.source.encoding }, (err, data) => {
             if (err) {
                 reject(err);
             }
@@ -60,12 +58,12 @@ var readContent = function (file, options) {
         });
     });
 };
-var toFileLocation = function (file) {
-    var dir = path.dirname(file);
-    var fileNameWithExt = path.basename(file);
-    var fileName = fileNameWithExt.substring(0, fileNameWithExt.indexOf('.'));
+const toFileLocation = (file) => {
+    const dir = path.dirname(file);
+    const fileNameWithExt = path.basename(file);
+    const fileName = fileNameWithExt.substring(0, fileNameWithExt.indexOf('.'));
     return {
-        dir: dir,
-        fileName: fileName,
+        dir,
+        fileName,
     };
 };

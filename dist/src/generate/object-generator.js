@@ -1,74 +1,74 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.objectGenerator = void 0;
-var options_1 = require("../options");
-var type_generator_1 = require("./type-generator");
-var objectGenerator = function (locatedSchema, gatheredInfo, inputInfo) {
-    var schema = locatedSchema.schema;
+const options_1 = require("../options");
+const type_generator_1 = require("./type-generator");
+const objectGenerator = (locatedSchema, gatheredInfo, inputInfo) => {
+    const schema = locatedSchema.schema;
     if (!schema.type || !schema.type.has('object')) {
         return;
     }
     try {
-        var properties = propertiesGenerator(locatedSchema, gatheredInfo, inputInfo);
-        var output = properties.join('; ');
+        const properties = propertiesGenerator(locatedSchema, gatheredInfo, inputInfo);
+        const output = properties.join('; ');
         if (locatedSchema.typeName) {
-            return "export class " + locatedSchema.typeName + " {" + output + "};\n";
+            return `export class ${locatedSchema.typeName} {${output}};\n`;
         }
-        return "{" + output + "}";
+        return `{${output}}`;
     }
     catch (err) {
-        throw new Error("generate object " + JSON.stringify(locatedSchema) + ": " + err);
+        throw new Error(`generate object ${JSON.stringify(locatedSchema)}: ${err}`);
     }
 };
 exports.objectGenerator = objectGenerator;
-var propertiesGenerator = function (locatedSchema, gatheredInfo, inputInfo) {
-    var schema = locatedSchema.schema;
-    var hasProperties = schema.properties && schema.properties.size;
+const propertiesGenerator = (locatedSchema, gatheredInfo, inputInfo) => {
+    const schema = locatedSchema.schema;
+    const hasProperties = schema.properties && schema.properties.size;
     if (!schema || (!hasProperties && !schema.additionalProperties)) {
         return [];
     }
-    var properties = [];
+    const properties = [];
     if (schema.properties) {
-        schema.properties.forEach(function (propertySchema, name) {
-            var output = propertyGenerator(locatedSchema, gatheredInfo, inputInfo, name, propertySchema);
+        schema.properties.forEach((propertySchema, name) => {
+            const output = propertyGenerator(locatedSchema, gatheredInfo, inputInfo, name, propertySchema);
             if (output) {
                 properties.push(output);
             }
         });
     }
     if (schema.additionalProperties) {
-        var propertyLocatedSchema = {
+        const propertyLocatedSchema = {
             fileLocation: locatedSchema.fileLocation,
             schema: schema.additionalProperties,
         };
-        var type = type_generator_1.typeGenerator(propertyLocatedSchema, gatheredInfo, inputInfo);
+        const type = (0, type_generator_1.typeGenerator)(propertyLocatedSchema, gatheredInfo, inputInfo);
         if (!type) {
-            throw new Error("unsupported type for additionalProperties");
+            throw new Error(`unsupported type for additionalProperties`);
         }
-        properties.push("[key: string]: " + type);
+        properties.push(`[key: string]: ${type}`);
     }
     return properties;
 };
-var propertyGenerator = function (locatedSchema, gatheredInfo, inputInfo, name, propertySchema) {
-    var schema = locatedSchema.schema;
+const propertyGenerator = (locatedSchema, gatheredInfo, inputInfo, name, propertySchema) => {
+    const schema = locatedSchema.schema;
     if (!schema.type) {
         return;
     }
-    var propertyLocatedSchema = {
+    const propertyLocatedSchema = {
         fileLocation: locatedSchema.fileLocation,
         schema: propertySchema,
     };
-    var type = type_generator_1.typeGenerator(propertyLocatedSchema, gatheredInfo, inputInfo);
+    const type = (0, type_generator_1.typeGenerator)(propertyLocatedSchema, gatheredInfo, inputInfo);
     if (!type) {
-        throw new Error("unable to generate type for property " + name);
+        throw new Error(`unable to generate type for property ${name}`);
     }
     if (schema.required && schema.required.has(name)) {
-        return "'" + name + "': " + type;
+        return `'${name}': ${type}`;
     }
     switch (inputInfo.options.ts.optionalFields) {
         case options_1.OptionalFieldPattern.QUESTION:
-            return "'" + name + "'?: " + type;
+            return `'${name}'?: ${type}`;
         case options_1.OptionalFieldPattern.PIPE_UNDEFINED:
-            return "'" + name + "': " + type + " | undefined";
+            return `'${name}': ${type} | undefined`;
     }
 };

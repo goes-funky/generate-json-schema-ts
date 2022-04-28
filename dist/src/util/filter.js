@@ -1,9 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.filteredJoin = exports.filtered = void 0;
-var filtered = function (values) { return values.filter(function (_) { return _; }); };
+const filtered = (values) => values.filter((_) => _);
 exports.filtered = filtered;
-var filteredJoin = function (values, joiner) {
-    return values.filter(function (_) { return _; }).join(joiner ? joiner : '');
-};
+const filteredJoin = (values, joiner) => values.filter((_) => _).join(joiner ? joiner : '');
 exports.filteredJoin = filteredJoin;
