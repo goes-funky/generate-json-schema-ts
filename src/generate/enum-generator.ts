@@ -1,5 +1,5 @@
 import { Schema } from '../schema';
-import { classify } from '../util';
+import { classify, underscore } from '../util';
 import { LocatedSchema, TypeGenerator } from './TypeGenerator';
 
 const enumGenerator: TypeGenerator = (locatedSchema: LocatedSchema): string | undefined => {
@@ -25,7 +25,10 @@ const enumGenerator: TypeGenerator = (locatedSchema: LocatedSchema): string | un
 };
 
 const normalize = (str: string): string => {
-  return classify(str.replaceAll(/\.[(\[<>\])]/g, ''));
+  const specialChars = ['<', '>', '.', '(', ')', '[', ']'];
+  specialChars.forEach((char) => (str = str.replaceAll(char, '_')));
+
+  return classify(underscore(str));
 };
 
 export { enumGenerator };
