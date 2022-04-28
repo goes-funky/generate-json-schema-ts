@@ -21,5 +21,5 @@ const enumGenerator = (locatedSchema) => {
 };
 exports.enumGenerator = enumGenerator;
 const normalize = (str) => {
-    return (0, util_1.classify)(str.replaceAll(/[(\[<>\])]/g, ''));
+    return (0, util_1.classify)(str.replaceAll(/\.[(\[<>\])]/g, ''));
 };

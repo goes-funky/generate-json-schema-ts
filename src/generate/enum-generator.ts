@@ -25,7 +25,7 @@ const enumGenerator: TypeGenerator = (locatedSchema: LocatedSchema): string | un
 };
 
 const normalize = (str: string): string => {
-  return classify(str.replaceAll(/[(\[<>\])]/g, ''));
+  return classify(str.replaceAll(/\.[(\[<>\])]/g, ''));
 };
 
 export { enumGenerator };
