@@ -43,7 +43,7 @@ const propertiesGenerator = (locatedSchema, gatheredInfo, inputInfo) => {
         };
         const type = (0, type_generator_1.typeGenerator)(propertyLocatedSchema, gatheredInfo, inputInfo);
         if (!type) {
-            throw new Error(`unsupported type for additionalProperties`);
+            throw new Error('unsupported type for additionalProperties');
         }
         properties.push(`[key: string]: ${type}`);
     }
@@ -62,13 +62,14 @@ const propertyGenerator = (locatedSchema, gatheredInfo, inputInfo, name, propert
     if (!type) {
         throw new Error(`unable to generate type for property ${name}`);
     }
+    const safeName = name.includes('-') ? `'${name}'` : name;
     if (schema.required && schema.required.has(name)) {
-        return `'${name}': ${type}`;
+        return `${safeName}: ${type}`;
     }
     switch (inputInfo.options.ts.optionalFields) {
         case options_1.OptionalFieldPattern.QUESTION:
-            return `'${name}'?: ${type}`;
+            return `${safeName}?: ${type}`;
         case options_1.OptionalFieldPattern.PIPE_UNDEFINED:
-            return `'${name}': ${type} | undefined`;
+            return `${safeName}: ${type} | undefined`;
     }
 };

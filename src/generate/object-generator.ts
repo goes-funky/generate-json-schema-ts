@@ -1,7 +1,7 @@
 import { OptionalFieldPattern } from '../options';
 import { Schema } from '../schema';
-import { LocatedSchema, SchemaGatheredInfo, SchemaInputInfo, TypeGenerator } from './TypeGenerator';
 import { typeGenerator } from './type-generator';
+import { LocatedSchema, SchemaGatheredInfo, SchemaInputInfo, TypeGenerator } from './TypeGenerator';
 
 const objectGenerator: TypeGenerator = (
   locatedSchema: LocatedSchema,
@@ -58,7 +58,7 @@ const propertiesGenerator = (
 
     const type = typeGenerator(propertyLocatedSchema, gatheredInfo, inputInfo);
     if (!type) {
-      throw new Error(`unsupported type for additionalProperties`);
+      throw new Error('unsupported type for additionalProperties');
     }
 
     properties.push(`[key: string]: ${type}`);
@@ -89,15 +89,17 @@ const propertyGenerator = (
     throw new Error(`unable to generate type for property ${name}`);
   }
 
+  const safeName = name.includes('-') ? `'${name}'` : name;
+
   if (schema.required && schema.required.has(name)) {
-    return `'${name}': ${type}`;
+    return `${safeName}: ${type}`;
   }
 
   switch (inputInfo.options.ts.optionalFields) {
     case OptionalFieldPattern.QUESTION:
-      return `'${name}'?: ${type}`;
+      return `${safeName}?: ${type}`;
     case OptionalFieldPattern.PIPE_UNDEFINED:
-      return `'${name}': ${type} | undefined`;
+      return `${safeName}: ${type} | undefined`;
   }
 };
 
