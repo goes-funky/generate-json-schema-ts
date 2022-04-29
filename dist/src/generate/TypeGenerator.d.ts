@@ -6,6 +6,7 @@ interface LocatedSchema {
     fileLocation: FileLocation;
     schema: Schema;
     typeName?: string;
+    isTopLevelSchema?: boolean;
 }
 interface SchemaGatheredInfo {
     namedSchemas: Map<string, Schema>;

@@ -16,6 +16,7 @@ const generate = (fileSchemas: Map<FileLocation, Schema>, options: AllOptions): 
     const locatedSchema: LocatedSchema = {
       fileLocation,
       schema,
+      isTopLevelSchema: true,
     };
     const generated: string = fileGenerator(locatedSchema, inputInfo);
     fileContent.set(fileLocation, generated);

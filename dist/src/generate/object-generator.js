@@ -11,8 +11,9 @@ const objectGenerator = (locatedSchema, gatheredInfo, inputInfo) => {
     try {
         const properties = propertiesGenerator(locatedSchema, gatheredInfo, inputInfo);
         const output = properties.join('; ');
+        const classOrInterface = locatedSchema.isTopLevelSchema ? 'class' : 'interface';
         if (locatedSchema.typeName) {
-            return `export class ${locatedSchema.typeName} {${output}};\n`;
+            return `export ${classOrInterface} ${locatedSchema.typeName} {${output}};\n`;
         }
         return `{${output}}`;
     }
