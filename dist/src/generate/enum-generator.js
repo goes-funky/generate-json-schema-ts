@@ -21,7 +21,6 @@ const enumGenerator = (locatedSchema) => {
 };
 exports.enumGenerator = enumGenerator;
 const normalize = (str) => {
-    const specialChars = ['<', '>', '.', '(', ')', '[', ']'];
-    specialChars.forEach((char) => (str = str.replaceAll(char, '_')));
+    str = str.replace(/[(\[\]{}()<>.]/g, '');
     return (0, util_1.classify)((0, util_1.underscore)(str));
 };

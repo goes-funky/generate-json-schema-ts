@@ -25,9 +25,7 @@ const enumGenerator: TypeGenerator = (locatedSchema: LocatedSchema): string | un
 };
 
 const normalize = (str: string): string => {
-  const specialChars = ['<', '>', '.', '(', ')', '[', ']'];
-  specialChars.forEach((char) => (str = str.replaceAll(char, '_')));
-
+  str = str.replace(/[(\[\]{}()<>.]/g, '');
   return classify(underscore(str));
 };
 

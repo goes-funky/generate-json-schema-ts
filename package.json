@@ -25,9 +25,11 @@
     "generate-json-schema-ts": "dist/scripts/generate-json-schema-ts.js"
   },
   "scripts": {
+    "clean": "rimraf dest",
     "format": "prettier --write src",
-    "postbuild": "npm run format",
-    "build": "tsc"
+    "prebuild": "npm run clean",
+    "build": "tsc",
+    "postbuild": "npm run format"
   },
   "devDependencies": {
     "@tsconfig/node16": "~1.0.2",
