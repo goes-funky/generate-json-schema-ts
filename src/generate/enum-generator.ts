@@ -13,7 +13,7 @@ const enumGenerator: TypeGenerator = (locatedSchema: LocatedSchema): string | un
   }
 
   if (locatedSchema.typeName) {
-    const values = Array.from(schema.enum).map((primitive) => `${normalize(primitive as string)} = '${primitive}'`);
+    const values = Array.from(schema.enum).map((primitive) => `${getEnumKey(primitive as string)} = '${primitive}'`);
     const output = `{${values.join(', ')}}`;
 
     return `export enum ${locatedSchema.typeName} ${output};\n`;
@@ -24,9 +24,26 @@ const enumGenerator: TypeGenerator = (locatedSchema: LocatedSchema): string | un
   return `(${output})`;
 };
 
+const getEnumKey = (str: string): string => {
+  const specialCharacterLabel = specialCharacterEnumLabel[str];
+  return specialCharacterLabel ? normalize(specialCharacterLabel) : normalize(str);
+};
+
 const normalize = (str: string): string => {
   str = str.replace(/[(\[\]{}()<>.]/g, '_');
   return classify(underscore(str));
+};
+
+const specialCharacterEnumLabel: Record<string, string> = {
+  '!': 'Exclamation',
+  '=': 'Equals',
+  '-': 'Between',
+  '<': 'LessThan',
+  '>': 'GreaterThan',
+  '_%': 'StartsWith',
+  '%_': 'EndsWith',
+  '%_%': 'Contains',
+  '!%_%': 'NotContains',
 };
 
 export { enumGenerator };

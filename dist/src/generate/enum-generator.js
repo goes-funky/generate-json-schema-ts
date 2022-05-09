@@ -11,7 +11,7 @@ const enumGenerator = (locatedSchema) => {
         throw new Error('Only enums with type string are supported');
     }
     if (locatedSchema.typeName) {
-        const values = Array.from(schema.enum).map((primitive) => `${normalize(primitive)} = '${primitive}'`);
+        const values = Array.from(schema.enum).map((primitive) => `${getEnumKey(primitive)} = '${primitive}'`);
         const output = `{${values.join(', ')}}`;
         return `export enum ${locatedSchema.typeName} ${output};\n`;
     }
@@ -20,7 +20,22 @@ const enumGenerator = (locatedSchema) => {
     return `(${output})`;
 };
 exports.enumGenerator = enumGenerator;
+const getEnumKey = (str) => {
+    const specialCharacterLabel = specialCharacterEnumLabel[str];
+    return specialCharacterLabel ? normalize(specialCharacterLabel) : normalize(str);
+};
 const normalize = (str) => {
     str = str.replace(/[(\[\]{}()<>.]/g, '_');
     return (0, util_1.classify)((0, util_1.underscore)(str));
+};
+const specialCharacterEnumLabel = {
+    '!': 'Exclamation',
+    '=': 'Equals',
+    '-': 'Between',
+    '<': 'LessThan',
+    '>': 'GreaterThan',
+    '_%': 'StartsWith',
+    '%_': 'EndsWith',
+    '%_%': 'Contains',
+    '!%_%': 'NotContains',
 };
