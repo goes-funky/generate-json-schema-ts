@@ -29,7 +29,7 @@ const normalize = (str) => {
     return (0, util_1.classify)((0, util_1.underscore)(str));
 };
 const specialCharacterEnumLabel = {
-    '!': 'Exclamation',
+    '!': 'IsNot',
     '=': 'Equals',
     '-': 'Between',
     '<': 'LessThan',

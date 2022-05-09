@@ -35,7 +35,7 @@ const normalize = (str: string): string => {
 };
 
 const specialCharacterEnumLabel: Record<string, string> = {
-  '!': 'Exclamation',
+  '!': 'IsNot',
   '=': 'Equals',
   '-': 'Between',
   '<': 'LessThan',
